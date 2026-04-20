@@ -5,3 +5,6 @@ node
  node --version
  
 desenvolvido em type script
+
+rodar a automação via web
+npx playwright test --ui  
