@@ -15,8 +15,10 @@ test('it should play a song', async ({ page }) => {
   const songCard = page.locator('.song').filter({ hasText: song.title })
 
   const play = songCard.locator('.play')
-  await play.click()
+  const pause = songCard.locator('.pause')
 
+  await play.click()
+  await expect(pause).toBeVisible({ timeout: 5000 })
 
 
   // await page.click(`//div[contains(@class,"song")]//h6[text()="${song.title}"]/..//button`)
