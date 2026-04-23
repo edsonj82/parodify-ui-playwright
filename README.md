@@ -6,6 +6,9 @@ node
  
 desenvolvido em type script
 
+instalação
+https://playwright.dev/docs/intro
+
 rodar a automação via web
 npx playwright test --ui  
 
