@@ -8,3 +8,6 @@ desenvolvido em type script
 
 rodar a automação via web
 npx playwright test --ui  
+
+rodar no modo headless
+npx playwright test 
