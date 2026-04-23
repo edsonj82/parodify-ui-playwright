@@ -12,7 +12,13 @@ test('it should play a song', async ({ page }) => {
   const loggedUser = page.locator('.logged-user');
   await expect(loggedUser).toHaveText('Fernando Papito');
 
-  await page.click(`//div[contains(@class,"song")]//h6[text()="${song.title}"]/..//button`)
+  const songCard = page.locator('.song').filter({ hasText: song.title })
 
-  await page.waitForTimeout(5000);
+  const play = songCard.locator('.play')
+  await play.click()
+
+
+
+  // await page.click(`//div[contains(@class,"song")]//h6[text()="${song.title}"]/..//button`)
+  // await page.waitForTimeout(5000);
 });
