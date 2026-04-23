@@ -3,8 +3,20 @@ import { test, expect } from '@playwright/test';
 test('it should play a song', async ({ page }) => {
 
   const song = {
-    title: 'Bughium'
+    id: 1,
+    title: "Semlls Likke Test Script",
+    artist: "Nullvana",
+    description: "Nullvana",
+    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
+    type: "album",
+    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
   };
+
+  await page.route('**/songs', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([song])
+  }));
 
   await page.goto('/');
 
@@ -19,6 +31,7 @@ test('it should play a song', async ({ page }) => {
 
   await play.click()
   await expect(pause).toBeVisible({ timeout: 5000 })
+  await expect(play).toBeVisible({ timeout: 7000 })
 
 
   // await page.click(`//div[contains(@class,"song")]//h6[text()="${song.title}"]/..//button`)
