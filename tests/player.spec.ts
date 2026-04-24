@@ -56,7 +56,7 @@ test('it should pause a song', async ({ page }) => {
   await expect(pause).not.toBeVisible()
 });
 
-test('it should change the song', async ({ page }) => {
+test('it should switch between songs', async ({ page }) => {
   const songs = [
     {
       id: 1,
@@ -77,31 +77,26 @@ test('it should change the song', async ({ page }) => {
       src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
     }
   ];
-
-  await page.route('**/songs', route => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify(songs)
-  }));
-
+  await mockSongs(page, songs);
   await page.goto('/');
 
-  const firstSongCard = page.locator('.song').first();
-  const secondSongCard = page.locator('.song').nth(1);
+  const first = page.locator('.song', { hasText: songs[0].title });
+  const second = page.locator('.song', { hasText: songs[1].title });
 
-  const firstPlay = firstSongCard.locator('.play');
-  const secondPlay = secondSongCard.locator('.play');
+  //toca primeira
+  await first.locator('.play').click();
+  await expect(first.locator('.pause')).toBeVisible();
 
-  await firstPlay.click();
-  await page.waitForTimeout(3000);
+  //toca para segunda
+  await second.locator('.play').click();
+  await expect(second.locator('.pause')).toBeVisible();
 
-  await expect(secondPlay).toBeVisible({ timeout: 5000 });
-  await secondPlay.click();
-
-  await page.waitForTimeout(3000);
-  await expect(firstPlay).toBeVisible({ timeout: 5000 });
+  // garante que a primeira voltou ao estado initial
+  await expect(first.locator('.play')).toBeVisible();
+  await expect(first.locator('.pause')).not.toBeVisible();
 });
 
+// TODO: refactor this test to check the current song component instead of the song card
 test('it should show the current song', async ({ page }) => {
   const song = {
     id: 1,
