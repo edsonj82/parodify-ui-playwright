@@ -33,7 +33,6 @@ test('it should play a song', async ({ page }) => {
   await expect(pause).toBeVisible({ timeout: 5000 })
   await expect(play).toBeVisible({ timeout: 7000 })
 
-
   // await page.click(`//div[contains(@class,"song")]//h6[text()="${song.title}"]/..//button`)
   // await page.waitForTimeout(5000);
 });
@@ -69,7 +68,6 @@ test('it should pause a song', async ({ page }) => {
   await page.waitForTimeout(5000);
   await expect(pause).not.toBeVisible()
   await expect(play).toBeVisible()
-
 });
 
 test('it should change the song', async ({ page }) => {
@@ -116,4 +114,35 @@ test('it should change the song', async ({ page }) => {
 
   await page.waitForTimeout(3000);
   await expect(firstPlay).toBeVisible({ timeout: 5000 });
+});
+
+test('it should show the current song', async ({ page }) => {
+  const song = {
+    id: 1,
+    title: "Smells Like Test Script",
+    artist: "Nullvana",
+    description: "Nullvana",
+    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
+    type: "album",
+    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
+  };
+  await page.route('**/songs', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([song])
+  }));
+  await page.goto('/');
+
+  const songCard = page.locator('.song').filter({ hasText: song.title });
+  const play = songCard.locator('.play');
+  await play.click();
+
+  const artist = page.locator(`//div[contains(@class,"songlist")]//div[contains(@class,"song")]//p[text()="${song.artist}"]`);
+  const title = page.locator(`//div[contains(@class,"songlist")]//div[contains(@class,"song")]//h6[text()="${song.title}"]`);
+
+  await expect(title).toHaveText(`${song.title}`);
+  await expect(artist).toHaveText(`${song.artist}`);
+
+  // await expect(currentSong).toHaveText(`${song.title} - ${song.artist}`);
+  // await expect(currentSong).toHaveText(`${song.artist}`);
 });
