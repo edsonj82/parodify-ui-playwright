@@ -58,7 +58,39 @@ test('it should display a music player', async ({ page }) => {
 
 });
 
+test('it should a stop music player', async ({ page }) => {
+  const song = {
+    id: 1,
+    title: "Smell Like Test Script",
+    artist: "Nullvana",
+    description: "Nullvana",
+    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
+    type: "album",
+    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
+  }
+  await page.route('**/songs', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([song])
+  }));
 
+  await page.goto('/');
 
+  // const loggedUser = page.locator('.logged-user');
+  // await expect(loggedUser).toHaveText('Fernando Papito');  
 
+  const songCard = page.locator('.song')
+    .filter({ hasText: song.title });
 
+  const play = songCard.locator('.play')
+  const pause = songCard.locator('.pause')
+
+  // await expect(play).toBeVisible();
+  // await expect(pause).toBeHidden();
+
+  await play.click();
+  await pause.click();
+
+  await expect(play).toBeVisible();
+  await expect(pause).toBeHidden();
+});
