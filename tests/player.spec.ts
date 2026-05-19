@@ -55,7 +55,6 @@ test('it should display a music player', async ({ page }) => {
   await expect(play).toBeVisible();  // Expect the play button to be visible again after some time (indicating the song has finished playing). 
 
   // await page.click('//div[contains(@class, "song")]//h6[text()="Bughium"]/..//button');
-
 });
 
 test('it should a stop music player', async ({ page }) => {
@@ -120,7 +119,6 @@ test('it should display the current song title', async ({ page }) => {
 
   const currentSongTitle = page.getByRole('heading', { name: song.title }).nth(1); // const currentSongTitle = page.locator(`//div[contains(@class,"song")]//h6[text()="${song.title}"]`);
   await expect(currentSongTitle).toBeVisible()
-
 });
 
 test('it should display the current song artist', async ({ page }) => {
