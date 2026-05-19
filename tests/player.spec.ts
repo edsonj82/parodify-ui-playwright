@@ -94,3 +94,32 @@ test('it should a stop music player', async ({ page }) => {
   await expect(play).toBeVisible();
   await expect(pause).toBeHidden();
 });
+
+test('it should display the current song title', async ({ page }) => {
+  const song = {
+    id: 1,
+    title: "Smell Like Test Script",
+    artist: "Nullvana",
+    description: "Nullvana",
+    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
+    type: "album",
+    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
+  }
+  await page.route('**/songs', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([song])
+  }));
+  await page.goto('/');
+
+  const songCard = page.locator('.song')
+    .filter({ hasText: song.title });
+
+  const play = songCard.locator('.play')
+  await play.click();
+  // const paramSongTitle = page.locator(`//div[contains(@class,"song")]//h6[text()="${song.title}"]`);
+  const currentSongTitle = page.getByRole('heading', { name: song.title }).nth(1); // const currentSongTitle = page.locator(`//div[contains(@class,"song")]//h6[text()="${song.title}"]`);
+  // const currentSongTitle = page.locator(paramSongTitle);
+  await expect(currentSongTitle).toBeVisible()
+  
+});
