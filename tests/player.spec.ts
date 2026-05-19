@@ -176,3 +176,30 @@ test('it should display the current song image', async ({ page }) => {
   const currentSongImage = page.locator(`//div[contains(@class,"song")]//img[@src="${song.image}"]`);
   await expect(currentSongImage).toBeVisible();
 });
+
+test('it should display the current song description', async ({ page }) => {
+  const song = {
+    id: 1,
+    title: "Smell Like Test Script",
+    artist: "Nullvana",
+    description: "Nullvana",
+    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
+    type: "album",
+    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
+  }
+  await page.route('**/songs', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([song])
+  }));
+  await page.goto('/');
+
+  const songCard = page.locator('.song')
+    .filter({ hasText: song.title });
+
+  const play = songCard.locator('.play')
+  await play.click();
+
+  const currentSongDescription = page.locator(`//div[contains(@class,"song")]//p[text()="${song.description}"]`);
+  await expect(currentSongDescription).toBeVisible();
+});
