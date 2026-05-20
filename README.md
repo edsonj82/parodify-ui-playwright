@@ -10,13 +10,21 @@ Este repositório contém uma suíte de testes automatizados de ponta a ponta (E
 
 ## 🏗️ Diferenciais Técnicos da Suíte
 
-### 1. Isolamento de Camada com Network Mocking
+### 1. Arquitetura de Custom Fixtures (Isolamento de Código e Dados)
+Para eliminar a duplicação crônica de código (*boilerplate*) e o espalhamento de payloads idênticos por múltiplos arquivos, a suíte implementa uma **Fixture Customizada**.
+- **Injeção Automática de Roteamento:** A fixture estende o comportamento padrão do `test` do Playwright, interceptando chamadas para o endpoint de catálogo (`**/songs`) e disponibilizando uma música mockada (`mockSong`) diretamente no escopo de cada cenário de teste.
+- **Manutenibilidade:** Qualquer mudança na estrutura de dados ou nos contratos da API necessita de alteração em um único ponto centralizado, mantendo os arquivos de teste focados exclusivamente em interações do usuário.
+
+### 2. Isolamento de Camada com Network Mocking
 A suíte implementa o método `page.route` para interceptar chamadas HTTP direcionadas ao endpoint de catálogo (`**/songs`). Ao injetar uma resposta controlada (Status `200` com payload JSON customizado), os testes tornam-se:
 - **Independentes:** Não sofrem com instabilidades, lentidões ou quedas do backend.
 - **Determinísticos:** Garantem que a UI processe exatamente a massa de dados esperada de forma previsível.
 
-### 2. Resiliência contra Elementos Duplicados (Strict Mode Resolution)
+### 3. Resiliência contra Elementos Duplicados (Strict Mode Resolution)
 Para contornar o comportamento assíncrono de componentes dinâmicos (como textos idênticos exibidos simultaneamente no card e no player inferior), a suíte utiliza estratégias avançadas de escopo do Playwright, combinando `.nth()`, `.last()`, locators baseados em acessibilidade (`getByRole`) e buscas delimitadas por containers (`songCard`).
+- Escopos atrelados ao container pai (`songCard`).
+- Métodos nativos como `.toHaveAttribute('src', ...)` para validação precisa de imagens de capa.
+- Resolução de textos duplicados com base em sua ordenação de renderização na árvore do DOM (`.last()` e `.nth()`).
 
 ---
 
@@ -48,8 +56,11 @@ Após o disparo do áudio, os testes asseguram que as informações corretas sã
 
 Os cenários estão centralizados no arquivo principal de especificações de comportamento:
 ```bash
-└── tests/
-    └── player.spec.ts          # Definição e execução de todos os cenários listados acima
+├── fixtures/
+│   └── base.ts                 # Fixture customizada que centraliza mocks de dados e rotas HTTP
+├── tests/
+│   └── player.spec.ts          # Scripts de testes otimizados e limpos consumindo a fixture
+└── package.json
 ```
 
 ## 🚀 Como Executar
