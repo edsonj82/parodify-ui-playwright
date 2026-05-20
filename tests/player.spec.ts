@@ -20,7 +20,7 @@ test('it should validate user player', async ({ page }) => {
 });
 
 test('it should display a music player', async ({ page }) => {
-  const MOCK_SONG = songs[0];
+  const MOCK_SONG = songs[1];
 
   await page.route('**/songs', route => route.fulfill({
     status: 200,
@@ -47,19 +47,12 @@ test('it should display a music player', async ({ page }) => {
 });
 
 test('it should a stop music player', async ({ page }) => {
-  const song = {
-    id: 1,
-    title: "Smell Like Test Script",
-    artist: "Nullvana",
-    description: "Nullvana",
-    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
-    type: "album",
-    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
-  }
+  const MOCK_SONG = songs[2];
+
   await page.route('**/songs', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
-    body: JSON.stringify([song])
+    body: JSON.stringify([MOCK_SONG])
   }));
 
   await page.goto('/');
@@ -68,7 +61,7 @@ test('it should a stop music player', async ({ page }) => {
   // await expect(loggedUser).toHaveText('Fernando Papito');  
 
   const songCard = page.locator('.song')
-    .filter({ hasText: song.title });
+    .filter({ hasText: MOCK_SONG.title });
 
   const play = songCard.locator('.play')
   const pause = songCard.locator('.pause')
@@ -84,29 +77,22 @@ test('it should a stop music player', async ({ page }) => {
 });
 
 test('it should display the current song title', async ({ page }) => {
-  const song = {
-    id: 1,
-    title: "Smell Like Test Script",
-    artist: "Nullvana",
-    description: "Nullvana",
-    image: "https://raw.githubusercontent.com/qaxperience/mock/main/covers/nevertesting.jpg",
-    type: "album",
-    src: "https://raw.githubusercontent.com/qaxperience/mock/main/songs/nirvana.mp3"
-  }
+  const MOCK_SONG = songs[3];
+
   await page.route('**/songs', route => route.fulfill({
     status: 200,
     contentType: 'application/json',
-    body: JSON.stringify([song])
+    body: JSON.stringify([MOCK_SONG])
   }));
   await page.goto('/');
 
   const songCard = page.locator('.song')
-    .filter({ hasText: song.title });
+    .filter({ hasText: MOCK_SONG.title });
 
   const play = songCard.locator('.play')
   await play.click();
 
-  const currentSongTitle = page.getByRole('heading', { name: song.title }).nth(1); // const currentSongTitle = page.locator(`//div[contains(@class,"song")]//h6[text()="${song.title}"]`);
+  const currentSongTitle = page.getByRole('heading', { name: MOCK_SONG.title }).nth(1); // const currentSongTitle = page.locator(`//div[contains(@class,"song")]//h6[text()="${MOCK_SONG.title}"]`);
   await expect(currentSongTitle).toBeVisible()
 });
 
